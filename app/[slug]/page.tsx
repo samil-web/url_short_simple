@@ -1,30 +1,29 @@
-import { NextApiRequest, NextApiResponse, NextPage } from "next";
+import { useRouter } from "next/router";
 import Head from "next/head";
+import { NextPage } from "next";
+import { useEffect } from "react";
 import connectToDatabase from "../../mongodb";
 import { COLLECTION_NAMES } from "../../types";
 
-export async function getServerSideProps(request: NextApiRequest) {
-  const hash = request.query.hash as string;
-  const database = await connectToDatabase();
-  const campaign = await database
-    .collection(COLLECTION_NAMES["url-info"])
-    .findOne({ uid: hash });
-
-  if (campaign) {
-    return {
-      redirect: {
-        destination: campaign.link,
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-}
-
 const HashPage: NextPage = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    async function fetchData() {
+      const hash = router.query.hash as string;
+      const database = await connectToDatabase();
+      const campaign = await database
+        .collection(COLLECTION_NAMES["url-info"])
+        .findOne({ uid: hash });
+
+      if (campaign) {
+        window.location.href = campaign.link;
+      }
+    }
+
+    fetchData();
+  }, [router.query.hash]);
+
   return (
     <div>
       <Head>
