@@ -1,3 +1,9 @@
+//This file is Rest Endpoint for this service
+// A unique hash is required to shorten URL
+// This endpoint should only be accessed by the POST method.
+// But why only POST?
+// It is because we don't want to expose the API key to the public.
+// We should set up 
 
 import { NextApiRequest, NextApiResponse } from "next";
 import connectToDatabase from "../mongodb";
@@ -20,6 +26,7 @@ export default async function CreateLink(
       message: "Only POST method is accepted on this route",
     });
   }
+  console.log(request.body)
   const { link } = request.body;
 
   if (!link) {
